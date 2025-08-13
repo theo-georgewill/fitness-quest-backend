@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -28,7 +27,7 @@ model User {
 
 model Program {
   id            Int          @id @default(autoincrement())
-  name          String
+  name          String       @unique
   description   String?
   durationWeeks Int?
   difficulty    String?
