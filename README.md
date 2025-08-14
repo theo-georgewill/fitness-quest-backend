@@ -8,35 +8,38 @@ This backend manages workout programs, daily workouts, and user enrollments, ser
 ## 📂 Project Structure
 
 ```
-fitness-quest-backend/
-│
-├── prisma/
-│   ├── schema.prisma        # Prisma schema definition
-│   └── migrations/          # Database migrations
-│
-├── src/
-│   ├── controllers/         # Handles request logic
-│   │   └── workoutController.ts
-│   │
-│   ├── routes/              # Express route definitions
-│   │   └── workoutRoutes.ts
-│   │
-│   ├── middlewares/         # Custom middlewares
-│   │
-│   ├── utils/               # Utility functions/helpers
-│   │
-│   ├── prismaClient.ts      # Prisma client instance
-│   ├── app.ts               # Express app configuration
-│   └── server.ts            # Entry point
-│
-├── .env                     # Environment variables
-├── package.json
-├── tsconfig.json
-└── README.md
+src/
+ ├── controllers/
+ │    ├── programController.ts
+ │    ├── programDayController.ts
+ │    ├── exerciseController.ts
+ │    ├── workoutController.ts
+ │    ├── enrollmentController.ts
+ │    └── logController.ts
+ │
+ ├── routes/
+ │    ├── programRoutes.ts
+ │    ├── programDayRoutes.ts
+ │    ├── exerciseRoutes.ts
+ │    ├── workoutRoutes.ts
+ │    ├── enrollmentRoutes.ts
+ │    └── logRoutes.ts
+ │
+ ├── prisma/
+ │    └── client.ts
+ │
+ ├── middlewares/
+ │    └── authMiddleware.ts
+ │
+ ├── types/
+ │    └── index.d.ts
+ │
+ ├── app.ts
+ └── server.ts
+ └── README.md
+
 ```
-
 ---
-
 ## 🚀 Tech Stack
 
 * **Language**: TypeScript

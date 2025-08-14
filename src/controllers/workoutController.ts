@@ -1,6 +1,42 @@
 import { Request, Response } from 'express';
 import prisma from '../prismaClient.js';
 
+export const getWorkoutsByDay = async (req: Request, res: Response) => {
+  const programDayId = Number(req.params.programDayId);
+
+  try {
+    const workouts = await prisma.workout.findMany({
+      where: { programDayId },
+      include: { exercise: true },
+    });
+
+    res.json(workouts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const createWorkout = async (req: Request, res: Response) => {
+  const { programDayId, exercises } = req.body;
+
+  try {
+    const workout = await prisma.workout.create({
+      data: {
+        programDayId,
+        exercises: {
+          create: exercises,
+        },
+      },
+    });
+
+    res.status(201).json(workout);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const getTodayWorkout = async (req: Request, res: Response) => {
   const userId = Number(req.params.userId);
 
