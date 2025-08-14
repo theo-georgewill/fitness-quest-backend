@@ -1,79 +1,119 @@
-// prisma/seed.ts
-import prisma from '../src/prismaClient.js'; // Adjust the import path as necessary
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
+
+const prisma = new PrismaClient()
 
 async function main() {
-  // --- Users ---
-  const userEmail = 'ttggwll@gmail.com';
-  let user = await prisma.user.findUnique({ where: { email: userEmail } });
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        name: 'Theo',
-        email: userEmail,
-        password: 'password123', // Hash in production!
-      },
-    });
-    console.log(`Created user: ${user.email}`);
-  }
+  console.log('🌱 Seeding database...')
 
-  // --- Programs ---
-  const programsData = [
-    {
-      name: 'Beginner Fitness',
-      description: '4-week starter program',
-      durationWeeks: 4,
-      difficulty: 'Beginner',
+  // hash passwords
+  const passwordHash = await bcrypt.hash('password123', 10)
+
+  // Create Users
+  const user1 = await prisma.user.create({
+    data: {
+      email: 'john@example.com',
+      name: 'John Doe',
+      passwordHash,
     },
-    {
-      name: 'Intermediate Fitness',
-      description: '6-week progressive program',
-      durationWeeks: 6,
-      difficulty: 'Intermediate',
+  })
+
+  const user2 = await prisma.user.create({
+    data: {
+      email: 'jane@example.com',
+      name: 'Jane Smith',
+      passwordHash,
     },
-  ];
+  })
 
-  for (const p of programsData) {
-    let program = await prisma.program.findFirst({ where: { name: p.name } });
-    if (!program) {
-      program = await prisma.program.create({ data: p });
-      console.log(`Created program: ${program.name}`);
-    }
+  // Create Exercises
+  const pushUps = await prisma.exercise.create({
+    data: {
+      name: 'Push-ups',
+      description: 'Do 10 push-ups',
+      targetMuscles: 'chest,triceps,shoulders',
+    },
+  })
 
-    // --- Program Days ---
-    for (let i = 1; i <= (program.durationWeeks ?? 4) * 3; i++) { // 3 workouts per week
-      const day = await prisma.programDay.create({
-        data: {
-          dayNumber: i,
-          description: `Day ${i} workout`,
-          programId: program.id,
-        },
-      });
+  const squats = await prisma.exercise.create({
+    data: {
+      name: 'Squats',
+      description: 'Do 15 bodyweight squats',
+      targetMuscles: 'quads,glutes',
+    },
+  })
 
-      // --- Exercises ---
-      await prisma.exercise.createMany({
-        data: [
+  const plank = await prisma.exercise.create({
+    data: {
+      name: 'Plank',
+      description: 'Hold for 30 seconds',
+      targetMuscles: 'core',
+    },
+  })
+
+  // Create a Program with Days & Workouts
+  const program = await prisma.program.create({
+    data: {
+      title: 'Beginner Fitness Program',
+      description: 'A simple starter program for new users.',
+      days: {
+        create: [
           {
-            name: 'Push Ups',
-            sets: 3,
-            reps: 12,
-            restSeconds: 60,
-            programDayId: day.id,
+            dayNumber: 1,
+            workouts: {
+              create: [
+                {
+                  exerciseId: pushUps.id,
+                  sets: 3,
+                  reps: 10,
+                  orderIndex: 1,
+                },
+                {
+                  exerciseId: squats.id,
+                  sets: 3,
+                  reps: 15,
+                  orderIndex: 2,
+                },
+              ],
+            },
           },
           {
-            name: 'Squats',
-            sets: 3,
-            reps: 15,
-            restSeconds: 60,
-            programDayId: day.id,
+            dayNumber: 2,
+            workouts: {
+              create: [
+                {
+                  exerciseId: plank.id,
+                  durationSecs: 30,
+                  sets: 3,
+                  orderIndex: 1,
+                },
+              ],
+            },
           },
         ],
-      });
-    }
-  }
+      },
+    },
+    include: {
+      days: {
+        include: {
+          workouts: {
+            include: { exercise: true },
+          },
+        },
+      },
+    },
+  })
 
-  console.log('Seeding complete!');
+  console.log('✅ Users:', { user1, user2 })
+  console.log('✅ Program:', program)
 }
 
 main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
