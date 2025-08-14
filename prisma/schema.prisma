@@ -56,7 +56,7 @@ model ProgramDay {
   updatedAt      DateTime         @updatedAt
 
   program        Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
-  workouts       Workout[]        // planned items (exercise prescriptions)
+  workouts       Workout[]        // planned workouts (exercise prescriptions)
   userWorkouts   UserWorkout[]    // completed sessions linked to this day
 
   @@unique([programId, dayNumber]) // one record per day per program
