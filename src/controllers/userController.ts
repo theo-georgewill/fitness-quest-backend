@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import prisma from '../prismaClient.js';
+import type { Request, Response } from 'express';
+import prisma from '../prismaClient.ts';
 
 // Define the expected body type for creating a user
 interface CreateUserBody {
@@ -13,7 +13,7 @@ export const createUser = async (req: Request<unknown, unknown, CreateUserBody>,
   const { name, email, password } = req.body;
   try {
     const user = await prisma.user.create({
-      data: { name, email, password },
+      data: { name, email, passwordHash: password },
     });
     res.json(user);
   } catch (err) {

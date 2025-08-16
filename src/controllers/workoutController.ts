@@ -3,11 +3,10 @@ import prisma from '../prismaClient.js';
 
 export const getWorkoutsByDay = async (req: Request, res: Response) => {
   const programDayId = Number(req.params.programDayId);
-
   try {
     const workouts = await prisma.workout.findMany({
       where: { programDayId },
-      include: { exercise: true },
+      include: { exercises: true },
     });
 
     res.json(workouts);
@@ -25,7 +24,12 @@ export const createWorkout = async (req: Request, res: Response) => {
       data: {
         programDayId,
         exercises: {
-          create: exercises,
+          create: exercises.map((ex: any) => ({
+            exercise: { connect: { id: ex.exerciseId } },
+            sets: ex.sets,
+            reps: ex.reps,
+            duration: ex.duration,
+          })),
         },
       },
     });
@@ -44,8 +48,17 @@ export const getTodayWorkout = async (req: Request, res: Response) => {
     // Get the first enrolled program and today's day
     const enrollment = await prisma.enrollment.findFirst({
       where: { userId },
-      include: { program: { include: { days: { include: { exercises: true } } } } },
-      orderBy: { startedAt: 'asc' },
+      include: { 
+        program: 
+          { include: 
+            { days: 
+              { include: 
+                { workouts: true } 
+              } 
+            } 
+          } 
+        },
+      orderBy: { startDate: 'asc' },
     });
 
     if (!enrollment) return res.status(404).json({ message: 'No enrollment found' });

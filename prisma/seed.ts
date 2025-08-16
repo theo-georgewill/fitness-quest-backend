@@ -97,7 +97,7 @@ async function main() {
       days: {
         include: {
           workouts: {
-            include: { exercise: true },
+            include: { exercises: true },
           },
         },
       },
