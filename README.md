@@ -55,7 +55,7 @@ src/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/fitness-quest-backend.git
+git clone https://github.com/theo-georgewill/fitness-quest-backend.git
 cd fitness-quest-backend
 ```
 
@@ -83,7 +83,7 @@ npx prisma migrate dev --name init
 ### 5. Seed the Database (optional)
 
 ```bash
-npx prisma db seed
+npm run seed
 ```
 
 ### 6. Start the Development Server
