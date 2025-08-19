@@ -46,7 +46,6 @@ model Program {
   days           ProgramDay[]
   enrollments    Enrollment[]
 }
-
 model ProgramDay {
   id             Int              @id @default(autoincrement())
   programId      Int
@@ -95,7 +94,6 @@ model Workout {
   exercises      WorkoutExercise[]
   @@index([programDayId])
 }
-
 
 model WorkoutExercise {
   id         Int      @id @default(autoincrement())
