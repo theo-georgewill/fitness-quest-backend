@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import prisma from "../prismaClient.ts";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cookie from "cookie";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -43,6 +44,15 @@ export const login =  async (req: Request, res: Response) => {
 
   //create JWT token
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
+
+  // Set cookie
+  res.setHeader("Set-Cookie", cookie.serialize("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60, // 1 hour
+    path: "/"
+  }));
 
   //respond with token
   res.json({ token });
