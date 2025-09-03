@@ -55,5 +55,20 @@ export const login =  async (req: Request, res: Response) => {
   }));
 
   //respond with token
-  res.json({ token });
+  res.json({ 
+    message: "Login successful", 
+    user: { id: user.id, email: user.email } 
+  });
+}
+
+export const logout = async (req: Request, res: Response) => {
+  res.setHeader("Set-Cookie", cookie.serialize("token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(0), // expire immediately
+    path: "/"
+  }));
+
+  res.json({ message: "Logged out successfully" });
 }

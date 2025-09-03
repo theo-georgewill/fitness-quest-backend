@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProgram, getPrograms } from '../controllers/programController.js';
+import { createProgram, getPrograms } from '../controllers/programController.ts';
 
 const router = express.Router();
 
