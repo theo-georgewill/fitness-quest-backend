@@ -106,7 +106,6 @@ npm run dev
 
 ## 📖 How It Works
 
-
 1. **User signs up** (frontend handles auth, backend stores user).
 2. **User enrolls** in a fitness program.
 3. **User fetches today's workout** using `/workouts/today/:userId`.
